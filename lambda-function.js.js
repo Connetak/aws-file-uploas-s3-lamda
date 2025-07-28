@@ -27,7 +27,7 @@ exports.handler = async (event) => {
 
     busboy.on('finish', async () => {
       const params = {
-        Bucket: 'your-s3-bucket-name', // 🔁 Replace with your S3 bucket name
+        Bucket: 'file-upload-2025', // 🔁 Replace with your S3 bucket name
         Key: uploadData.filename,
         Body: uploadData.buffer,
         ContentType: uploadData.mimetype
