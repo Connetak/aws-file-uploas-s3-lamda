@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload a File to AWS S3</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 8px 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload a File to AWS S3</h1>
+    <input type="file" id="fileInput">
+    <br>
+    <button onclick="uploadFile()">Upload</button>
+    <p id="statusMsg"></p>
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById("fileInput");
+      const statusMsg = document.getElementById("statusMsg");
+
+      if (!fileInput.files.length) {
+        statusMsg.innerText = "Please choose a file first!";
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async () => {
+        const base64Data = reader.result.split(',')[1];
+
+        const response = await fetch("
+https://26r0idvf73.execute-api.us-east-1.amazonaws.com/prod/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            filedata: base64Data
+          })
+        });
+
+        const result = await response.text();
+        statusMsg.innerText = result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
